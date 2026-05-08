@@ -1,5 +1,5 @@
---- kernel/sys.c.orig
-+++ kernel/sys.c
+--- a/kernel/sys.c.orig
++++ b/kernel/sys.c
 @@ -1305,6 +1305,11 @@
  	return ret;
  }
