@@ -1,5 +1,5 @@
 diff --git a/kernel/Kbuild b/kernel/Kbuild
-index 0bf1f25ed..1f82d2bd3 100644
+index 0bf1f25ed..e2cc24a0e 100644
 --- a/kernel/Kbuild
 +++ b/kernel/Kbuild
 @@ -3,18 +3,7 @@ kernelsu-objs := core/init.o
@@ -21,7 +21,7 @@ index 0bf1f25ed..1f82d2bd3 100644
  kernelsu-objs += extras.o
  kernelsu-objs += tiny_sulog.o
  
-@@ -139,4 +128,15 @@ ccflags-y += -DKSU_NEW_DCACHE_FLUSH=$(KSU_NEW_DCACHE_FLUSH)
+@@ -139,4 +128,14 @@ ccflags-y += -DKSU_NEW_DCACHE_FLUSH=$(KSU_NEW_DCACHE_FLUSH)
  ccflags-y += -Wno-strict-prototypes -Wno-int-conversion -Wno-gcc-compat -Wno-missing-prototypes
  ccflags-y += -Wno-declaration-after-statement -Wno-unused-function -Wno-unused-variable
  
@@ -36,8 +36,6 @@ index 0bf1f25ed..1f82d2bd3 100644
 +endif
 +
  # Keep a new line here!! Because someone may append config
-+ksun-293ca01-susfs-v2.1.0-a14-6.1-ef16cbce.patch
-\ No newline at end of file
 diff --git a/kernel/Kconfig b/kernel/Kconfig
 index c77016613..5c169f595 100644
 --- a/kernel/Kconfig
