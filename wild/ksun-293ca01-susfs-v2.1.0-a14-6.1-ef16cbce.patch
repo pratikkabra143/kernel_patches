@@ -336,7 +336,7 @@ index 3a48d8ceb..5956083a3 100644
  	pr_info("handle umount for uid: %d, pid: %d\n", new_uid, current->pid);
  
 diff --git a/kernel/feature/sucompat.c b/kernel/feature/sucompat.c
-index d5501a9b4..49a463c9c 100644
+index d5501a9b4..c9f71f6f7 100644
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
 @@ -11,6 +11,11 @@
@@ -351,7 +351,7 @@ index d5501a9b4..49a463c9c 100644
  
  #include "policy/allowlist.h"
  #include "policy/feature.h"
-@@ -25,18 +30,28 @@
+@@ -25,18 +30,29 @@
  #define SU_PATH "/system/bin/su"
  #define SH_PATH "/system/bin/sh"
  
@@ -365,11 +365,13 @@ index d5501a9b4..49a463c9c 100644
  static int su_compat_feature_get(u64 *value)
  {
 -	*value = ksu_su_compat_enabled ? 1 : 0;
+-	return 0;
 +    if (static_key_enabled(&ksu_su_compat_enabled))
 +        *value = 1;
 +    else
 +        *value = 0;
- 	return 0;
++	
++    return 0;
  }
  
  static int su_compat_feature_set(u64 value)
@@ -383,7 +385,7 @@ index d5501a9b4..49a463c9c 100644
  	pr_info("su_compat: set to %d\n", enable);
  	return 0;
  }
-@@ -71,110 +86,150 @@ static char __user *ksud_user_path(void)
+@@ -71,110 +87,150 @@ static char __user *ksud_user_path(void)
  	return userspace_stack_buffer(ksud_path, sizeof(ksud_path));
  }
  
@@ -430,9 +432,7 @@ index d5501a9b4..49a463c9c 100644
 +int ksu_handle_execveat_init(struct filename *filename, struct user_arg_ptr *argv_user, struct user_arg_ptr *envp_user) {
 +    if (current->pid != 1 && is_init(get_current_cred())) {
 +        if (unlikely(strcmp(filename->name, KSUD_PATH) == 0)) {
-+            char tmp_filename[SUSFS_MAX_LEN_PATHNAME] = {0};
-+            const char __user *argv_user_ptr = get_user_arg_ptr(*argv_user, 0);
-+            struct ksu_sulog_pending_event *pending_sucompat = NULL;
++            int ret;
 +
 +            pr_info("hook_manager: escape to root for init executing ksud: %d\n", current->pid);
 +            ret = escape_to_root_for_init();
@@ -534,6 +534,8 @@ index d5501a9b4..49a463c9c 100644
 -	if (ret < 0) {
 -		pr_warn("Access filename when execve failed: %ld", ret);
 -		goto do_orig_execve;
++    char path[sizeof(su_path) + 1] = {0};
++    
 +    strncpy_from_user(path, *filename_user, sizeof(path));
 + 
 +    if (unlikely(!memcmp(path, su_path, sizeof(su_path)))) {
