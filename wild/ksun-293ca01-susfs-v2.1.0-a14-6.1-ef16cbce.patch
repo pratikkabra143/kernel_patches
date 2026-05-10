@@ -1410,7 +1410,7 @@ index 08488da68..9aa0ae487 100644
 +
  #endif
 diff --git a/kernel/supercall/dispatch.c b/kernel/supercall/dispatch.c
-index e1801e83c..4c368fad2 100644
+index e1801e83c..c63b26181 100644
 --- a/kernel/supercall/dispatch.c
 +++ b/kernel/supercall/dispatch.c
 @@ -4,6 +4,8 @@
@@ -1571,7 +1571,7 @@ index e1801e83c..4c368fad2 100644
 +        ksu_set_manager_appid(cmd);
 +
 +        if (cmd == ksu_get_manager_appid()) {
-+            if (copy_to_user((void __user *)arg4, &reply, sizeof(reply)))
++            if (copy_to_user((void __user *)*arg, &reply, sizeof(reply)))
 +                pr_info("sys_reboot: reply fail\n");
 +        }
 +
@@ -1586,7 +1586,7 @@ index e1801e83c..4c368fad2 100644
 +        if (ret)
 +            return 0;
 +
-+        if (copy_to_user((void __user *)arg4, &reply, sizeof(reply) ))
++        if (copy_to_user((void __user *)*arg, &reply, sizeof(reply) ))
 +            return 0;
 +    }
 +
