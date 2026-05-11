@@ -1786,10 +1786,21 @@ index 89a973596..460367382 100644
  extern uint32_t ksuver_override;
  
 diff --git a/kernel/supercall/supercall.c b/kernel/supercall/supercall.c
-index 16aa46c72..9856f27c6 100644
+index 16aa46c72..7ccbc8239 100644
 --- a/kernel/supercall/supercall.c
 +++ b/kernel/supercall/supercall.c
-@@ -86,171 +86,156 @@ static void ksu_install_fd_tw_func(struct callback_head *cb)
+@@ -20,6 +20,10 @@
+ 
+ #include "tiny_sulog.h"
+ 
++#if defined(CONFIG_KSU_SUSFS) && defined(CONFIG_KSU_SUSFS_SPOOF_UNAME)
++extern struct static_key_false susfs_is_uname_spoof_buffer_set;
++#endif
++
+ uint32_t ksuver_override = 0;
+ 
+ struct ksu_install_fd_tw {
+@@ -86,171 +90,156 @@ static void ksu_install_fd_tw_func(struct callback_head *cb)
      kfree(tw);
  }
  
