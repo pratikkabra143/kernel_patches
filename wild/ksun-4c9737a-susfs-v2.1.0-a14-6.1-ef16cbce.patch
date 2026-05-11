@@ -348,7 +348,7 @@ index 3a48d8ceb..5956083a3 100644
  	pr_info("handle umount for uid: %d, pid: %d\n", new_uid, current->pid);
  
 diff --git a/kernel/feature/sucompat.c b/kernel/feature/sucompat.c
-index d5501a9b4..559dbeb66 100644
+index d5501a9b4..110cecc7c 100644
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
 @@ -11,6 +11,11 @@
@@ -363,17 +363,15 @@ index d5501a9b4..559dbeb66 100644
  
  #include "policy/allowlist.h"
  #include "policy/feature.h"
-@@ -22,21 +27,33 @@
+@@ -25,18 +30,33 @@
+ #define SU_PATH "/system/bin/su"
+ #define SH_PATH "/system/bin/sh"
  
- #include "tiny_sulog.h"
- 
--#define SU_PATH "/system/bin/su"
--#define SH_PATH "/system/bin/sh"
+-bool ksu_su_compat_enabled __read_mostly = true;
 +static const char sh_path[] = SH_PATH;
 +static const char su_path[] = SU_PATH;
 +static const char ksud_path[] = KSUD_PATH;
- 
--bool ksu_su_compat_enabled __read_mostly = true;
++
 +// Stubs for future adb_root and sulog integration
 +static inline int ksu_adb_root_handle_execve(const char *pathname, void ***envp) { return 0; }
 +static inline void *ksu_sulog_capture_sucompat(const char *filename, struct user_arg_ptr *argv, gfp_t gfp) { return NULL; }
@@ -403,7 +401,7 @@ index d5501a9b4..559dbeb66 100644
  	pr_info("su_compat: set to %d\n", enable);
  	return 0;
  }
-@@ -71,110 +88,188 @@ static char __user *ksud_user_path(void)
+@@ -71,110 +91,188 @@ static char __user *ksud_user_path(void)
  	return userspace_stack_buffer(ksud_path, sizeof(ksud_path));
  }
  
@@ -434,13 +432,13 @@ index d5501a9b4..559dbeb66 100644
 +		return compat_ptr(compat);
  	}
 +#endif
- 
++
 +	if (get_user(native, argv.ptr.native + nr))
 +		return ERR_PTR(-EFAULT);
 +
 +	return native;
 +}
-+
+ 
 +/*
 + * return 0 -> No further checks should be required afterwards
 + * return non-zero -> Further checks should be continued afterwards
