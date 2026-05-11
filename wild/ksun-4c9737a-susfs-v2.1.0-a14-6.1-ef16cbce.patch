@@ -348,7 +348,7 @@ index 3a48d8ceb..5956083a3 100644
  	pr_info("handle umount for uid: %d, pid: %d\n", new_uid, current->pid);
  
 diff --git a/kernel/feature/sucompat.c b/kernel/feature/sucompat.c
-index d5501a9b4..110cecc7c 100644
+index d5501a9b4..7076a9f61 100644
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
 @@ -11,6 +11,11 @@
@@ -363,7 +363,7 @@ index d5501a9b4..110cecc7c 100644
  
  #include "policy/allowlist.h"
  #include "policy/feature.h"
-@@ -25,18 +30,33 @@
+@@ -25,18 +30,34 @@
  #define SU_PATH "/system/bin/su"
  #define SH_PATH "/system/bin/sh"
  
@@ -386,6 +386,7 @@ index d5501a9b4..110cecc7c 100644
 +        *value = 1;
 +    else
 +        *value = 0;
++
  	return 0;
  }
  
@@ -401,7 +402,7 @@ index d5501a9b4..110cecc7c 100644
  	pr_info("su_compat: set to %d\n", enable);
  	return 0;
  }
-@@ -71,110 +91,188 @@ static char __user *ksud_user_path(void)
+@@ -71,110 +92,188 @@ static char __user *ksud_user_path(void)
  	return userspace_stack_buffer(ksud_path, sizeof(ksud_path));
  }
  
