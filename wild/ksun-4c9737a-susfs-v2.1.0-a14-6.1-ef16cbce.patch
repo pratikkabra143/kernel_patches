@@ -348,7 +348,7 @@ index 3a48d8ceb..5956083a3 100644
  	pr_info("handle umount for uid: %d, pid: %d\n", new_uid, current->pid);
  
 diff --git a/kernel/feature/sucompat.c b/kernel/feature/sucompat.c
-index d5501a9b4..2be8bf893 100644
+index d5501a9b4..f90911689 100644
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
 @@ -11,6 +11,11 @@
@@ -537,7 +537,7 @@ index d5501a9b4..2be8bf893 100644
 +        return ret;
 +    }
 +    
-+    return 0;
++    return -EINVAL;
 +}
 +
 +// the call from execve_handler_pre won't provided correct value for __never_use_argument, use them after fix execve_handler_pre, keeping them for consistence for manually patched code
