@@ -1,0 +1,10 @@
+diff --git a/kernel/hook/setuid_hook.h b/kernel/hook/setuid_hook.h
+index a1b2c3d4..e5f6g7h8 100644
+--- a/kernel/hook/setuid_hook.h
++++ b/kernel/hook/setuid_hook.h
+@@ -8,4 +8,4 @@
+ void ksu_setuid_hook_init(void);
+ void ksu_setuid_hook_exit(void);
+ 
+-int ksu_handle_setresuid(uid_t old_uid, uid_t new_uid);
++int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid);

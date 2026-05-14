@@ -21,3 +21,9 @@ index 0bf1f25e..9abe7678 100644
  kernelsu-objs += extras.o
  kernelsu-objs += tiny_sulog.o
  
+@@ -142,3 +131,5 @@ ccflags-y += -Wno-declaration-after-statement -Wno-unused-function -Wno-unused-v
+ 
+ # Keep a new line here!! Because someone may append config
++
++ccflags-y += -DCONFIG_KSU_SUSFS
+\ No newline at end of file
