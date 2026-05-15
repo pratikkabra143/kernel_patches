@@ -1,8 +1,8 @@
 diff --git a/kernel/Kbuild b/kernel/Kbuild
-index 0bf1f25e..9abe7678 100644
+index 5198b25e..9abe7678 100644
 --- a/kernel/Kbuild
 +++ b/kernel/Kbuild
-@@ -3,18 +3,7 @@ kernelsu-objs := core/init.o
+@@ -3,11 +3,7 @@ kernelsu-objs := core/init.o
  kernelsu-objs += feature/kernel_umount.o
  kernelsu-objs += feature/sucompat.o
  
@@ -11,13 +11,13 @@ index 0bf1f25e..9abe7678 100644
 -kernelsu-objs += hook/syscall_event_bridge.o
 -kernelsu-objs += hook/syscall_hook_manager.o
 -kernelsu-objs += hook/tp_marker.o
--ifeq ($(CONFIG_ARM64),y)
--kernelsu-objs += hook/arm64/patch_memory.o
--kernelsu-objs += hook/arm64/syscall_hook.o
--else ifeq ($(CONFIG_X86_64),y)
--kernelsu-objs += hook/x86_64/patch_memory.o
--kernelsu-objs += hook/x86_64/syscall_hook.o
--endif
- kernelsu-objs += extras.o
- kernelsu-objs += tiny_sulog.o
+ ifeq ($(CONFIG_ARM64),y)
+ kernelsu-objs += hook/arm64/patch_memory.o
+ kernelsu-objs += hook/arm64/syscall_hook.o
+@@ -141,3 +131,5 @@ ccflags-y += -Wno-strict-prototypes -Wno-int-conversion -Wno-gcc-compat -Wno-mis
+ ccflags-y += -Wno-declaration-after-statement -Wno-unused-function -Wno-unused-variable
  
+ # Keep a new line here!! Because someone may append config
++
++ccflags-y += -DCONFIG_KSU_SUSFS
+\ No newline at end of file

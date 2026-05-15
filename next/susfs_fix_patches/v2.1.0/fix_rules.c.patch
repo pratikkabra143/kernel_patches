@@ -1,0 +1,15 @@
+diff --git a/kernel/selinux/rules.c b/kernel/selinux/rules.c
+index a1b2c3d4..e5f6g7h8 100644
+--- a/kernel/selinux/rules.c
++++ b/kernel/selinux/rules.c
+@@ -148,6 +148,10 @@ void apply_kernelsu_rules()
+     synchronize_rcu();
+     ksu_destroy_sepolicy(old_pol);
+ 
++#ifdef CONFIG_KSU_SUSFS
++	susfs_set_zygote_sid();
++#endif
++
+     reset_avc_cache();
+ out_unlock:
+     mutex_unlock(&selinux_state.policy_mutex);

@@ -1,0 +1,24 @@
+diff --git a/kernel/policy/app_profile.c b/kernel/policy/app_profile.c
+index a1b2c3d4..e5f6g7h8 100644
+--- a/kernel/policy/app_profile.c
++++ b/kernel/policy/app_profile.c
+@@ -63,7 +63,7 @@ void setup_groups(struct root_profile *profile, struct cred *cred)
+ 
+ void seccomp_filter_release(struct task_struct *tsk);
+ 
+-static void disable_seccomp(void)
++void disable_seccomp(void)
+ {
+     struct task_struct *fake;
+ 
+diff --git a/kernel/policy/app_profile.h b/kernel/policy/app_profile.h
+index b1c2d3e4..f5g6h7j8 100644
+--- a/kernel/policy/app_profile.h
++++ b/kernel/policy/app_profile.h
+@@ -6,5 +6,6 @@
+ int escape_with_root_profile(void);
+ 
+ void escape_to_root_for_init(void);
++void disable_seccomp(void);
+ 
+ #endif
