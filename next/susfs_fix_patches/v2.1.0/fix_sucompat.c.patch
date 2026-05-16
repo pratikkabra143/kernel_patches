@@ -5,7 +5,7 @@
  #include "feature/sucompat.h"
  #include "policy/app_profile.h"
 -#include "hook/syscall_hook.h"
- 
+-
  #include "tiny_sulog.h"
 +#include <linux/susfs_def.h>
 +#include <linux/namei.h>
