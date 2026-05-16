@@ -1,5 +1,5 @@
 diff --git a/kernel/core/init.c b/kernel/core/init.c
-index 06cf1884..1e0dc36d 100644
+index 219d3ebd..bba348a7 100644
 --- a/kernel/core/init.c
 +++ b/kernel/core/init.c
 @@ -6,22 +6,22 @@
@@ -19,7 +19,7 @@ index 06cf1884..1e0dc36d 100644
  #include "runtime/ksud.h"
  #include "runtime/ksud_boot.h"
 -#include "supercall/supercall.h"
-+#include "feature/sulog.h"
++#include "tiny_sulog.h"
  #include "ksu.h"
  #include "infra/file_wrapper.h"
  #include "selinux/selinux.h"
@@ -30,7 +30,15 @@ index 06cf1884..1e0dc36d 100644
  
  #if defined(__x86_64__)
  #include <asm/cpufeature.h>
-@@ -119,18 +119,14 @@ int __init kernelsu_init(void)
+@@ -69,7 +69,6 @@ __attribute__((naked)) int __init kernelsu_init_early(void)
+ #endif
+ 
+ struct cred *ksu_cred;
+-bool ksu_late_loaded;
+ 
+ #ifdef CONFIG_KSU_DEBUG
+ bool allow_shell = true;
+@@ -120,18 +119,14 @@ int __init kernelsu_init(void)
  		pr_err("prepare cred failed!\n");
  	}
  
@@ -52,7 +60,7 @@ index 06cf1884..1e0dc36d 100644
  
  		apply_kernelsu_rules();
  		cache_sid();
-@@ -144,8 +140,6 @@ int __init kernelsu_init(void)
+@@ -145,8 +140,6 @@ int __init kernelsu_init(void)
  		ksu_allowlist_init();
  		ksu_load_allow_list();
  
@@ -61,7 +69,7 @@ index 06cf1884..1e0dc36d 100644
  		ksu_throne_tracker_init();
  		ksu_observer_init();
  		ksu_file_wrapper_init();
-@@ -159,8 +153,6 @@ int __init kernelsu_init(void)
+@@ -160,8 +153,6 @@ int __init kernelsu_init(void)
  		}
  
  	} else {
@@ -70,7 +78,7 @@ index 06cf1884..1e0dc36d 100644
  		ksu_allowlist_init();
  
  		ksu_throne_tracker_init();
-@@ -180,11 +172,6 @@ int __init kernelsu_init(void)
+@@ -181,11 +172,6 @@ int __init kernelsu_init(void)
  
  void __exit kernelsu_exit(void)
  {
@@ -82,7 +90,7 @@ index 06cf1884..1e0dc36d 100644
  	if (!ksu_late_loaded)
  		ksu_ksud_exit();
  
-@@ -198,9 +185,9 @@ void __exit kernelsu_exit(void)
+@@ -199,9 +185,9 @@ void __exit kernelsu_exit(void)
  
  	ksu_allowlist_exit();
  
