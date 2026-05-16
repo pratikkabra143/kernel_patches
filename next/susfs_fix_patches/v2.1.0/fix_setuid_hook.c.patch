@@ -1,6 +1,6 @@
 --- a/kernel/hook/setuid_hook.c
 +++ b/kernel/hook/setuid_hook.c
-@@ -81,20 +81,22 @@
+@@ -81,20 +81,18 @@
          return 0;
      }
  
@@ -31,9 +31,12 @@
      // Handle kernel umount
      ksu_handle_umount(old_uid, new_uid);
 -
+-    return 0;
+-}
 +    // Handle extra susfs work
 +    ksu_handle_extra_susfs_work();
 +    // Mark current proc as umounted
 +    susfs_set_current_proc_umounted();
-     return 0;
- }
++    return 0;
++}
+\ No newline at end of file

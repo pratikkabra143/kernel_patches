@@ -242,3 +242,4 @@
  
  // sucompat: permitted process can execute 'su' to gain root access.
  void __init ksu_sucompat_init()
+\ No newline at end of file
