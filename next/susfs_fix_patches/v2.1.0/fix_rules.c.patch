@@ -1,10 +1,10 @@
 --- a/kernel/selinux/rules.c
 +++ b/kernel/selinux/rules.c
-@@ -124,8 +124,14 @@
-     ksu_destroy_sepolicy(old_pol);
+@@ -150,9 +150,13 @@
  
      reset_avc_cache();
-+
+ 
+-    susfs_set_batch_sid();
  out_unlock:
      mutex_unlock(&selinux_state.policy_mutex);
 +

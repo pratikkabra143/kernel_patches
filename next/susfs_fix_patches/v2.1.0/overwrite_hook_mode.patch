@@ -1,6 +1,6 @@
 --- a/kernel/supercall/dispatch.c
 +++ b/kernel/supercall/dispatch.c
-@@ -732,11 +732,7 @@
+@@ -715,11 +715,7 @@
  {
      struct ksu_get_hook_mode_cmd cmd = {0};
  
