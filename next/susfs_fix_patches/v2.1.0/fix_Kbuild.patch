@@ -1,8 +1,6 @@
-diff --git a/kernel/Kbuild b/kernel/Kbuild
-index 0bf1f25e..9abe7678 100644
 --- a/kernel/Kbuild
 +++ b/kernel/Kbuild
-@@ -3,18 +3,7 @@ kernelsu-objs := core/init.o
+@@ -3,18 +3,7 @@
  kernelsu-objs += feature/kernel_umount.o
  kernelsu-objs += feature/sucompat.o
  
@@ -21,3 +19,17 @@ index 0bf1f25e..9abe7678 100644
  kernelsu-objs += extras.o
  kernelsu-objs += tiny_sulog.o
  
+@@ -61,11 +50,8 @@
+ ccflags-y += -I$(srctree)/security/selinux -I$(srctree)/security/selinux/include
+ ccflags-y += -I$(objtree)/security/selinux -include $(srctree)/include/uapi/asm-generic/errno.h
+ 
+-ifeq ($(filter /%,$(src)),)
+-KSU_KERNEL_DIR := $(srctree)/$(src)
+-else
+-KSU_KERNEL_DIR := $(src)
+-endif
++## As we are building gki only, no KBUILD_EXTMOD is needed
++## Since there is still a build error for 6.12 as $(src) returns absolute path, so here we just hardcode it
++KSU_KERNEL_DIR := $(srctree)/drivers/kernelsu
+ 
+ ccflags-y += -I$(KSU_KERNEL_DIR) -I$(KSU_KERNEL_DIR)/include

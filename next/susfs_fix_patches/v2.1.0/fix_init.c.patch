@@ -1,16 +1,27 @@
-diff --git a/kernel/core/init.c b/kernel/core/init.c
-index ec6532bc..34e7ec61 100644
 --- a/kernel/core/init.c
 +++ b/kernel/core/init.c
-@@ -5,6 +5,7 @@
- #include <linux/rcupdate.h>
- #include <linux/sched.h>
- #include <linux/workqueue.h>
+@@ -12,16 +12,18 @@
+ #include "policy/feature.h"
+ #include "klog.h" // IWYU pragma: keep
+ #include "manager/manager_observer.h"
+ #include "manager/throne_tracker.h"
+-#include "hook/syscall_hook_manager.h"
+ #include "hook/lsm_hook.h"
+ #include "runtime/ksud.h"
+ #include "runtime/ksud_boot.h"
+ #include "supercall/supercall.h"
+ #include "ksu.h"
+ #include "infra/file_wrapper.h"
+ #include "selinux/selinux.h"
+-#include "hook/syscall_hook.h"
+ #include "feature/selinux_hide.h"
++#include "hook/setuid_hook.h"
++#include "feature/sucompat.h"
 +#include <linux/susfs.h>
  
- #include "policy/allowlist.h"
- #include "policy/app_profile.h"
-@@ -62,28 +63,6 @@ struct cred *ksu_cred;
+ #if defined(__x86_64__)
+ #include <asm/cpufeature.h>
+@@ -80,26 +82,6 @@
  
  int __init kernelsu_init(void)
  {
@@ -39,13 +50,17 @@ index ec6532bc..34e7ec61 100644
  #ifdef CONFIG_KSU_DEBUG
  	pr_alert("*************************************************************");
  	pr_alert("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
-@@ -99,75 +78,35 @@ int __init kernelsu_init(void)
-         pr_err("prepare cred failed!\n");
-     }
+@@ -119,78 +101,36 @@
+ 		pr_err("prepare cred failed!\n");
+ 	}
  
 -	ksu_syscall_hook_init();
 -
  	ksu_feature_init();
+ 
+-	ksu_lsm_hook_init();
+-
+ 	ksu_selinux_hide_init();
  
  	ksu_supercalls_init();
  
@@ -86,8 +101,7 @@ index ec6532bc..34e7ec61 100644
  
 -	} else {
 -		ksu_syscall_hook_manager_init();
-+    susfs_init();
- 
+-
 -		ksu_allowlist_init();
 -
 -		ksu_throne_tracker_init();
@@ -96,12 +110,13 @@ index ec6532bc..34e7ec61 100644
 -
 -		ksu_file_wrapper_init();
 -	}
--
--#ifdef MODULE
--#ifndef CONFIG_KSU_DEBUG
--	kobject_del(&THIS_MODULE->mkobj.kobj);
--#endif
--#endif
++    susfs_init();
+ 
+ #ifdef MODULE
+ #ifndef CONFIG_KSU_DEBUG
+ 	kobject_del(&THIS_MODULE->mkobj.kobj);
+ #endif
+ #endif
  	return 0;
  }
  
@@ -111,7 +126,7 @@ index ec6532bc..34e7ec61 100644
 -	ksu_syscall_hook_manager_exit();
 -
  	ksu_supercalls_exit();
- 
+-
 -	if (!ksu_late_loaded)
 -		ksu_ksud_exit();
 -
@@ -119,7 +134,6 @@ index ec6532bc..34e7ec61 100644
  	synchronize_rcu();
  
 -	// Phase 2: Now safe to release data structures
-+	// Now safe to release data structures
  	ksu_observer_exit();
  
  	ksu_throne_tracker_exit();
