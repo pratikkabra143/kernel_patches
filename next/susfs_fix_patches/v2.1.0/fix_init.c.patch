@@ -1,16 +1,16 @@
 diff --git a/kernel/core/init.c b/kernel/core/init.c
-index 219d3ebd..b17d8df3 100644
+index 06cf1884..1e0dc36d 100644
 --- a/kernel/core/init.c
 +++ b/kernel/core/init.c
-@@ -5,6 +5,7 @@
- #include <linux/rcupdate.h>
+@@ -6,22 +6,22 @@
  #include <linux/sched.h>
  #include <linux/workqueue.h>
-+#include <linux/susfs.h>
  
++#include <linux/susfs.h>
++
  #include "policy/allowlist.h"
  #include "policy/app_profile.h"
-@@ -12,16 +13,14 @@
+ #include "policy/feature.h"
  #include "klog.h" // IWYU pragma: keep
  #include "manager/manager_observer.h"
  #include "manager/throne_tracker.h"
@@ -30,15 +30,7 @@ index 219d3ebd..b17d8df3 100644
  
  #if defined(__x86_64__)
  #include <asm/cpufeature.h>
-@@ -69,7 +68,6 @@ __attribute__((naked)) int __init kernelsu_init_early(void)
- #endif
- 
- struct cred *ksu_cred;
--bool ksu_late_loaded;
- 
- #ifdef CONFIG_KSU_DEBUG
- bool allow_shell = true;
-@@ -120,18 +118,14 @@ int __init kernelsu_init(void)
+@@ -119,18 +119,14 @@ int __init kernelsu_init(void)
  		pr_err("prepare cred failed!\n");
  	}
  
@@ -47,10 +39,10 @@ index 219d3ebd..b17d8df3 100644
  	ksu_feature_init();
  
 -	ksu_lsm_hook_init();
--
--	ksu_selinux_hide_init();
 +	ksu_sucompat_init();
  
+-	ksu_selinux_hide_init();
+-
 -	ksu_supercalls_init();
 +	ksu_setuid_hook_init();
  
@@ -60,7 +52,7 @@ index 219d3ebd..b17d8df3 100644
  
  		apply_kernelsu_rules();
  		cache_sid();
-@@ -145,8 +139,6 @@ int __init kernelsu_init(void)
+@@ -144,8 +140,6 @@ int __init kernelsu_init(void)
  		ksu_allowlist_init();
  		ksu_load_allow_list();
  
@@ -69,7 +61,7 @@ index 219d3ebd..b17d8df3 100644
  		ksu_throne_tracker_init();
  		ksu_observer_init();
  		ksu_file_wrapper_init();
-@@ -160,8 +152,6 @@ int __init kernelsu_init(void)
+@@ -159,8 +153,6 @@ int __init kernelsu_init(void)
  		}
  
  	} else {
@@ -78,7 +70,7 @@ index 219d3ebd..b17d8df3 100644
  		ksu_allowlist_init();
  
  		ksu_throne_tracker_init();
-@@ -181,11 +171,6 @@ int __init kernelsu_init(void)
+@@ -180,11 +172,6 @@ int __init kernelsu_init(void)
  
  void __exit kernelsu_exit(void)
  {
@@ -90,7 +82,7 @@ index 219d3ebd..b17d8df3 100644
  	if (!ksu_late_loaded)
  		ksu_ksud_exit();
  
-@@ -199,9 +184,9 @@ void __exit kernelsu_exit(void)
+@@ -198,9 +185,9 @@ void __exit kernelsu_exit(void)
  
  	ksu_allowlist_exit();
  

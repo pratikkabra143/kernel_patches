@@ -1,16 +1,8 @@
 diff --git a/kernel/policy/app_profile.c b/kernel/policy/app_profile.c
-index ef1611f2..b8d1ae3d 100644
+index c3db708c..b8d1ae3d 100644
 --- a/kernel/policy/app_profile.c
 +++ b/kernel/policy/app_profile.c
-@@ -14,7 +14,6 @@
- #include "klog.h" // IWYU pragma: keep
- #include "selinux/selinux.h"
- #include "infra/su_mount_ns.h"
--#include "hook/tp_marker.h"
- 
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
- static struct group_info root_groups = { .usage = REFCOUNT_INIT(2) };
-@@ -170,10 +169,10 @@ int escape_with_root_profile(void)
+@@ -169,10 +169,10 @@ int escape_with_root_profile(void)
      // setup capabilities
      // we need CAP_DAC_READ_SEARCH becuase `/data/adb/ksud` is not accessible for non root process
      // we add it here but don't add it to cap_inhertiable, it would be dropped automaticly after exec!
@@ -24,7 +16,7 @@ index ef1611f2..b8d1ae3d 100644
  
      setup_groups(profile, cred);
      setup_selinux(profile->selinux_domain, cred);
-@@ -182,10 +181,6 @@ int escape_with_root_profile(void)
+@@ -181,10 +181,6 @@ int escape_with_root_profile(void)
  
      disable_seccomp();
  
@@ -35,22 +27,3 @@ index ef1611f2..b8d1ae3d 100644
      setup_mount_ns(profile->namespaces);
      ksu_put_root_profile(profile);
      return 0;
-@@ -197,14 +192,16 @@ out_abort_creds:
-     return ret;
- }
- 
--void escape_to_root_for_init(void)
-+int escape_to_root_for_init(void)
- {
-     struct cred *cred = prepare_creds();
-     if (!cred) {
-         pr_err("Failed to prepare init's creds!\n");
--        return;
-+        return -EINVAL;
-     }
- 
-     setup_selinux(KERNEL_SU_CONTEXT, cred);
-     commit_creds(cred);
-+
-+    return 0;
- }
