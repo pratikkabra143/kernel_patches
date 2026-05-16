@@ -1,38 +1,39 @@
-# SUSFS Fix Patch v2.1.0 - Formatting Fixed
 --- a/kernel/hook/setuid_hook.c
 +++ b/kernel/hook/setuid_hook.c
-@@ -81,19 +81,23 @@
+@@ -81,20 +81,22 @@
          return 0;
      }
  
-+    // Check if spawned process is normal user app and needs to be umounted
-+    if (likely(is_zygote_normal_app_uid(new_uid) && ksu_uid_should_umount(new_uid)))
-+        goto do_umount;
-+
-     if (ksu_is_allow_uid_for_current(new_uid)) {
+-    if (ksu_is_allow_uid_for_current(new_uid)) {
 -        if (current->seccomp.mode == SECCOMP_MODE_FILTER &&
 -            current->seccomp.filter) {
-+        if (current->seccomp.mode == SECCOMP_MODE_FILTER && current->seccomp.filter) {
-             spin_lock_irq(&current->sighand->siglock);
-             ksu_seccomp_allow_cache(current->seccomp.filter, __NR_reboot);
-             spin_unlock_irq(&current->sighand->siglock);
-         }
+-            spin_lock_irq(&current->sighand->siglock);
+-            ksu_seccomp_allow_cache(current->seccomp.filter, __NR_reboot);
+-            spin_unlock_irq(&current->sighand->siglock);
+-        }
 -        ksu_set_task_tracepoint_flag(current);
 -    } else {
 -        ksu_clear_task_tracepoint_flag_if_needed(current);
-     }
- 
+-    }
+-
++    // Check if spawned process is normal user app and needs to be umounted
++    if (likely(is_zygote_normal_app_uid(new_uid) && ksu_uid_should_umount(new_uid)))
++        goto do_umount;
++    if (ksu_is_allow_uid_for_current(new_uid)) {
++        if (current->seccomp.mode == SECCOMP_MODE_FILTER && current->seccomp.filter) {
++            spin_lock_irq(&current->sighand->siglock);
++            ksu_seccomp_allow_cache(current->seccomp.filter, __NR_reboot);
++            spin_unlock_irq(&current->sighand->siglock);
++        }
++    }
 +    return 0;
-+
 +do_umount:
      // Handle kernel umount
      ksu_handle_umount(old_uid, new_uid);
- 
+-
 +    // Handle extra susfs work
 +    ksu_handle_extra_susfs_work();
-+
 +    // Mark current proc as umounted
 +    susfs_set_current_proc_umounted();
-+
      return 0;
  }
