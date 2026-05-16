@@ -1,8 +1,6 @@
-diff --git a/kernel/hook/setuid_hook.h b/kernel/hook/setuid_hook.h
-index 3a3dfea8..b8486238 100644
 --- a/kernel/hook/setuid_hook.h
 +++ b/kernel/hook/setuid_hook.h
-@@ -7,7 +7,4 @@
+@@ -4,7 +4,4 @@
  void ksu_setuid_hook_init(void);
  void ksu_setuid_hook_exit(void);
  

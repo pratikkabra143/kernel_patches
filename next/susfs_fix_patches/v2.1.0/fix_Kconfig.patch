@@ -1,16 +1,6 @@
-diff --git a/kernel/Kconfig b/kernel/Kconfig
-index c7701661..5c169f59 100644
 --- a/kernel/Kconfig
 +++ b/kernel/Kconfig
-@@ -2,7 +2,6 @@ menu "KernelSU"
- 
- config KSU
- 	tristate "KernelSU function support"
--	depends on KPROBES && EXT4_FS
- 	default y
- 	help
- 	  Enable kernel-level root privileges on Android System.
-@@ -35,4 +34,95 @@ config KSU_DISABLE_POLICY
+@@ -35,4 +35,95 @@
  	  Escalation will always use the default full root profile, and
  	  non-root handling will follow the global umount policy only.
  

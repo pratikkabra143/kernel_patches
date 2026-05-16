@@ -1,5 +1,3 @@
-diff --git a/kernel/policy/feature.h b/kernel/policy/feature.h
-index 7c3d5cfc..c00d4512 100644
 --- a/kernel/policy/feature.h
 +++ b/kernel/policy/feature.h
 @@ -2,7 +2,7 @@

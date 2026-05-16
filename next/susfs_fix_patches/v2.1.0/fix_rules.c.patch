@@ -1,8 +1,6 @@
-diff --git a/kernel/selinux/rules.c b/kernel/selinux/rules.c
-index fc8181b0..858c8b99 100644
 --- a/kernel/selinux/rules.c
 +++ b/kernel/selinux/rules.c
-@@ -149,8 +149,14 @@ void apply_kernelsu_rules()
+@@ -124,8 +124,14 @@
      ksu_destroy_sepolicy(old_pol);
  
      reset_avc_cache();

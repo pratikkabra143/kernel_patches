@@ -1,8 +1,6 @@
-diff --git a/kernel/selinux/selinux.c b/kernel/selinux/selinux.c
-index 45219f3e..18da872b 100644
 --- a/kernel/selinux/selinux.c
 +++ b/kernel/selinux/selinux.c
-@@ -207,3 +207,97 @@ bool is_init(const struct cred *cred)
+@@ -207,3 +207,112 @@
  {
      return is_sid_match(cred, cached_init_sid, INIT_CONTEXT);
  }
@@ -99,4 +97,19 @@ index 45219f3e..18da872b 100644
 +void susfs_set_priv_app_sid(void)
 +{
 +    susfs_set_sid(KERNEL_PRIV_APP_DOMAIN, &susfs_priv_app_sid);
++}
++
++bool susfs_is_current_priv_app_domain(void) {
++    return unlikely(current_sid() == susfs_priv_app_sid);
++}
++
++bool susfs_is_current_proc_umounted(void) {
++    return false;
++}
++
++void susfs_set_current_proc_umounted(void) {
++}
++
++bool susfs_is_current_ksu_proxy_domain(void) {
++	return false;
 +}

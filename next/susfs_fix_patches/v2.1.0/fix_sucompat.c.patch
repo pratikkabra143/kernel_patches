@@ -1,8 +1,18 @@
-diff --git a/kernel/feature/sucompat.c b/kernel/feature/sucompat.c
-index 33115933..f9091168 100644
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
-@@ -30,159 +30,254 @@
+@@ -11,6 +11,11 @@
+ #include <linux/version.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/ptrace.h>
++#include <linux/susfs_def.h>
++#include <linux/namei.h>
++#include <linux/minmax.h>
++#include "selinux/selinux.h"
++#include "objsec.h"
+ 
+ #include "policy/allowlist.h"
+ #include "policy/feature.h"
+@@ -25,159 +30,254 @@
  #define SU_PATH "/system/bin/su"
  #define SH_PATH "/system/bin/sh"
  
@@ -310,7 +320,7 @@ index 33115933..f9091168 100644
 +    }
 +
 +    return 0;
-+}
+ }
 +
 +#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
 +int ksu_handle_stat(int *dfd, struct filename **filename, int *flags) {
@@ -324,7 +334,7 @@ index 33115933..f9091168 100644
 +    pr_info("ksu_handle_stat: su->sh!\n");
 +    memcpy((void *)((*filename)->name), sh_path, sizeof(sh_path));
 +    return 0;
- }
++}
 +#else
 +int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
 +{

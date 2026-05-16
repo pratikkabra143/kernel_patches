@@ -1,8 +1,6 @@
-diff --git a/kernel/runtime/boot_event.c b/kernel/runtime/boot_event.c
-index 99486e80..4df4e001 100644
 --- a/kernel/runtime/boot_event.c
 +++ b/kernel/runtime/boot_event.c
-@@ -13,6 +13,7 @@
+@@ -12,6 +12,7 @@
  
  bool ksu_module_mounted __read_mostly = false;
  bool ksu_boot_completed __read_mostly = false;
@@ -10,7 +8,7 @@ index 99486e80..4df4e001 100644
  
  extern void ksu_avc_spoof_late_init(void);
  
-@@ -31,7 +32,10 @@ void on_post_fs_data(void)
+@@ -30,7 +31,10 @@
      ksu_load_allow_list();
      ksu_observer_init();
      // Sanity check for safe mode only needs early-boot input samples.
