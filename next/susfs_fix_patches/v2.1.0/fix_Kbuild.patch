@@ -1,35 +1,26 @@
+diff --git a/kernel/Kbuild b/kernel/Kbuild
+index fd64ca19..3d542350 100644
 --- a/kernel/Kbuild
 +++ b/kernel/Kbuild
-@@ -1,18 +1,7 @@
- kernelsu-objs := core/init.o
+@@ -2,12 +2,9 @@ kernelsu-objs := core/init.o
  
  kernelsu-objs += feature/kernel_umount.o
  kernelsu-objs += feature/sucompat.o
++kernelsu-objs += feature/sulog.o
  
 -kernelsu-objs += hook/lsm_hook.o
  kernelsu-objs += hook/setuid_hook.o
 -kernelsu-objs += hook/syscall_event_bridge.o
 -kernelsu-objs += hook/syscall_hook_manager.o
 -kernelsu-objs += hook/tp_marker.o
--ifeq ($(CONFIG_ARM64),y)
--kernelsu-objs += hook/arm64/patch_memory.o
--kernelsu-objs += hook/arm64/syscall_hook.o
--else ifeq ($(CONFIG_X86_64),y)
--kernelsu-objs += hook/x86_64/patch_memory.o
--kernelsu-objs += hook/x86_64/syscall_hook.o
--endif
- kernelsu-objs += extras.o
-@@ -61,11 +50,8 @@
+ ifeq ($(CONFIG_ARM64),y)
+ kernelsu-objs += hook/arm64/patch_memory.o
+ kernelsu-objs += hook/arm64/syscall_hook.o
+@@ -60,6 +57,7 @@ endif
+ 
  ccflags-y += -I$(srctree)/security/selinux -I$(srctree)/security/selinux/include
  ccflags-y += -I$(objtree)/security/selinux -include $(srctree)/include/uapi/asm-generic/errno.h
++ccflags-y += -DCONFIG_KSU_SUSFS -DCONFIG_KSU_SUSFS_SUS_PATH
  
--ifeq ($(filter /%,$(src)),)
--KSU_KERNEL_DIR := $(srctree)/$(src)
--else
--KSU_KERNEL_DIR := $(src)
--endif
-+## As we are building gki only, no KBUILD_EXTMOD is needed
-+## Since there is still a build error for 6.12 as $(src) returns absolute path, so here we just hardcode it
-+KSU_KERNEL_DIR := $(srctree)/drivers/kernelsu
- 
- ccflags-y += -I$(KSU_KERNEL_DIR) -I$(KSU_KERNEL_DIR)/include
+ ifeq ($(filter /%,$(src)),)
+ KSU_KERNEL_DIR := $(srctree)/$(src)
