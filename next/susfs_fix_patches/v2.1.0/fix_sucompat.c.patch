@@ -1,49 +1,15 @@
 diff --git a/kernel/feature/sucompat.c b/kernel/feature/sucompat.c
-index 33115933..0e30b59c 100644
+index 33115933..13bea1ce 100644
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
-@@ -27,69 +27,32 @@
+@@ -62,34 +62,32 @@ static void __user *userspace_stack_buffer(const void *d, size_t len)
+ 	return copy_to_user(p, d, len) ? NULL : p;
+ }
  
- #include "tiny_sulog.h"
- 
--#define SU_PATH "/system/bin/su"
--#define SH_PATH "/system/bin/sh"
--
--bool ksu_su_compat_enabled __read_mostly = true;
--
--static int su_compat_feature_get(u64 *value)
--{
--	*value = ksu_su_compat_enabled ? 1 : 0;
--	return 0;
--}
--
--static int su_compat_feature_set(u64 value)
--{
--	bool enable = value != 0;
--	ksu_su_compat_enabled = enable;
--	pr_info("su_compat: set to %d\n", enable);
--	return 0;
--}
--
--static const struct ksu_feature_handler su_compat_handler = {
--	.feature_id = KSU_FEATURE_SU_COMPAT,
--	.name = "su_compat",
--	.get_handler = su_compat_feature_get,
--	.set_handler = su_compat_feature_set,
--};
--
--static void __user *userspace_stack_buffer(const void *d, size_t len)
--{
--	// To avoid having to mmap a page in userspace, just write below the stack
--	// pointer.
--	char __user *p = (void __user *)current_user_stack_pointer() - len;
--
--	return copy_to_user(p, d, len) ? NULL : p;
--}
 +static const char su_path[] = SU_PATH;
 +static const char sh_path[] = SH_PATH;
 +static const char ksud_path[] = KSUD_PATH;
- 
++
  static char __user *sh_user_path(void)
  {
 -	static const char sh_path[] = "/system/bin/sh";
@@ -78,7 +44,7 @@ index 33115933..0e30b59c 100644
  		write_sulog('a');
  		pr_info("faccessat su->sh!\n");
  		*filename_user = sh_user_path();
-@@ -98,11 +61,32 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
+@@ -98,24 +96,43 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
  	return 0;
  }
  
@@ -91,7 +57,7 @@ index 33115933..0e30b59c 100644
 +	if (!ksu_is_allow_uid_for_current(current_uid().val)) {
 +		return 0;
 +	}
-+
+ 
 +	if (unlikely(!filename_ptr || !*filename_ptr)) {
 +		return 0;
 +	}
@@ -100,12 +66,10 @@ index 33115933..0e30b59c 100644
 +	if (unlikely(!memcmp(path, su_path, sizeof(su_path)))) {
 +		write_sulog('s');
 +		pr_info("newfstatat su->sh!\n");
-+		// We cannot easily change struct filename's name in-place if it is shared
-+		// But for sucompat, we just need to redirect the check.
 +		// In hookless version, we might need a different approach if name redirection is required.
 +		// For now, we follow the legacy logic but adapted for struct filename.
 +	}
- 
++
 +	return 0;
 +}
 +#else
@@ -114,7 +78,9 @@ index 33115933..0e30b59c 100644
  	if (!ksu_is_allow_uid_for_current(current_uid().val)) {
  		return 0;
  	}
-@@ -111,11 +95,11 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
+ 
+-	if (unlikely(!filename_user)) {
++	if (unlikely(!filename_user || !*filename_user)) {
  		return 0;
  	}
  
@@ -128,7 +94,7 @@ index 33115933..0e30b59c 100644
  		write_sulog('s');
  		pr_info("newfstatat su->sh!\n");
  		*filename_user = sh_user_path();
-@@ -123,66 +107,61 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
+@@ -123,66 +140,57 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
  
  	return 0;
  }
@@ -173,9 +139,6 @@ index 33115933..0e30b59c 100644
 +			pr_err("escape_with_root_profile failed: %d\n", ret);
 +			return 0;
 +		}
-+		// Redirect to ksud
-+		// Note: Redirecting struct filename is tricky. 
-+		// In hookless, we might need to modify the caller's pointer.
  	}
  
 -	if (likely(memcmp(path, su, sizeof(su))))
@@ -214,7 +177,7 @@ index 33115933..0e30b59c 100644
 +	return 0;
  }
  
- // sucompat: permitted process can execute 'su' to gain root access.
+-// sucompat: permitted process can execute 'su' to gain root access.
 -void __init ksu_sucompat_init()
 +void __init ksu_sucompat_init(void)
  {
