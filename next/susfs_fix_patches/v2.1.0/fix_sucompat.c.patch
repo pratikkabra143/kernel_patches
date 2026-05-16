@@ -1,3 +1,4 @@
+# SUSFS Fix Patch v2.1.0 - Formatting Fixed
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
 @@ -18,13 +18,22 @@
