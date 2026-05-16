@@ -1,17 +1,8 @@
 diff --git a/kernel/hook/setuid_hook.c b/kernel/hook/setuid_hook.c
-index 3cccc780..7e948953 100644
+index ff232021..7e948953 100644
 --- a/kernel/hook/setuid_hook.c
 +++ b/kernel/hook/setuid_hook.c
-@@ -11,6 +11,8 @@
- #include <linux/types.h>
- #include <linux/uaccess.h>
- #include <linux/uidgid.h>
-+#include <linux/susfs_def.h>
-+#include "selinux/selinux.h"
- 
- #include "policy/allowlist.h"
- #include "hook/setuid_hook.h"
-@@ -18,40 +20,65 @@
+@@ -20,40 +20,65 @@
  #include "manager/manager_identity.h"
  #include "infra/seccomp_cache.h"
  #include "supercall/supercall.h"

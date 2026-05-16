@@ -1,20 +1,8 @@
 diff --git a/kernel/feature/sucompat.c b/kernel/feature/sucompat.c
-index d5501a9b..f9091168 100644
+index 33115933..f9091168 100644
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
-@@ -11,6 +11,11 @@
- #include <linux/version.h>
- #include <linux/sched/task_stack.h>
- #include <linux/ptrace.h>
-+#include <linux/susfs_def.h>
-+#include <linux/namei.h>
-+#include <linux/minmax.h>
-+#include "selinux/selinux.h"
-+#include "objsec.h"
- 
- #include "policy/allowlist.h"
- #include "policy/feature.h"
-@@ -25,159 +30,254 @@
+@@ -30,159 +30,254 @@
  #define SU_PATH "/system/bin/su"
  #define SH_PATH "/system/bin/sh"
  

@@ -1,5 +1,5 @@
 diff --git a/kernel/core/init.c b/kernel/core/init.c
-index 219d3ebd..7d704184 100644
+index f5f565a4..7d704184 100644
 --- a/kernel/core/init.c
 +++ b/kernel/core/init.c
 @@ -5,6 +5,7 @@
@@ -10,7 +10,15 @@ index 219d3ebd..7d704184 100644
  
  #include "policy/allowlist.h"
  #include "policy/app_profile.h"
-@@ -20,16 +21,10 @@
+@@ -12,22 +13,18 @@
+ #include "klog.h" // IWYU pragma: keep
+ #include "manager/manager_observer.h"
+ #include "manager/throne_tracker.h"
++#include "hook/syscall_hook_manager.h"
++#include "hook/lsm_hook.h"
+ #include "runtime/ksud.h"
+ #include "runtime/ksud_boot.h"
+ #include "supercall/supercall.h"
  #include "ksu.h"
  #include "infra/file_wrapper.h"
  #include "selinux/selinux.h"
@@ -30,15 +38,7 @@ index 219d3ebd..7d704184 100644
  
  // workaround for A12-5.10 kernel
  // Some third-party kernel (e.g. linegaeOS) uses wrong toolchain, which supports
-@@ -69,7 +64,6 @@ __attribute__((naked)) int __init kernelsu_init_early(void)
- #endif
- 
- struct cred *ksu_cred;
--bool ksu_late_loaded;
- 
- #ifdef CONFIG_KSU_DEBUG
- bool allow_shell = true;
-@@ -80,28 +74,6 @@ module_param(allow_shell, bool, 0);
+@@ -77,28 +74,6 @@ module_param(allow_shell, bool, 0);
  
  int __init kernelsu_init(void)
  {
@@ -67,7 +67,7 @@ index 219d3ebd..7d704184 100644
  #ifdef CONFIG_KSU_DEBUG
  	pr_alert("*************************************************************");
  	pr_alert("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
-@@ -111,6 +83,7 @@ int __init kernelsu_init(void)
+@@ -108,6 +83,7 @@ int __init kernelsu_init(void)
  	pr_alert("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
  	pr_alert("*************************************************************");
  #endif
@@ -75,7 +75,7 @@ index 219d3ebd..7d704184 100644
  	if (allow_shell) {
  		pr_alert("shell is allowed at init!");
  	}
-@@ -120,7 +93,9 @@ int __init kernelsu_init(void)
+@@ -117,7 +93,9 @@ int __init kernelsu_init(void)
  		pr_err("prepare cred failed!\n");
  	}
  
@@ -86,7 +86,7 @@ index 219d3ebd..7d704184 100644
  
  	ksu_feature_init();
  
-@@ -130,69 +105,29 @@ int __init kernelsu_init(void)
+@@ -127,69 +105,29 @@ int __init kernelsu_init(void)
  
  	ksu_supercalls_init();
  
@@ -96,35 +96,35 @@ index 219d3ebd..7d704184 100644
 -		apply_kernelsu_rules();
 -		cache_sid();
 -		setup_ksu_cred();
-+	ksu_sucompat_init();
- 
+-
 -		// Grant current process (ksud late-load) root
 -		// with KSU SELinux domain before enforcing SELinux, so it
 -		// can continue to access /data/app etc. after enforcement.
 -		escape_to_root_for_init();
-+	ksu_setuid_hook_init();
++	ksu_sucompat_init();
  
 -		ksu_allowlist_init();
 -		ksu_load_allow_list();
-+	ksu_allowlist_init();
++	ksu_setuid_hook_init();
  
 -		ksu_syscall_hook_manager_init();
-+	ksu_throne_tracker_init();
++	ksu_allowlist_init();
  
 -		ksu_throne_tracker_init();
 -		ksu_observer_init();
 -		ksu_file_wrapper_init();
-+	ksu_ksud_init();
++	ksu_throne_tracker_init();
  
 -		ksu_boot_completed = true;
 -		track_throne(false);
-+	ksu_file_wrapper_init();
++	ksu_ksud_init();
  
 -		if (!getenforce()) {
 -			pr_info("Permissive SELinux, enforcing\n");
 -			setenforce(true);
 -		}
--
++	ksu_file_wrapper_init();
+ 
 -	} else {
 -		ksu_syscall_hook_manager_init();
 -
