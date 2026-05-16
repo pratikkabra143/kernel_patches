@@ -1,5 +1,5 @@
 diff --git a/kernel/feature/sucompat.c b/kernel/feature/sucompat.c
-index 33115933..13bea1ce 100644
+index 33115933..314a5a15 100644
 --- a/kernel/feature/sucompat.c
 +++ b/kernel/feature/sucompat.c
 @@ -62,34 +62,32 @@ static void __user *userspace_stack_buffer(const void *d, size_t len)
@@ -44,7 +44,7 @@ index 33115933..13bea1ce 100644
  		write_sulog('a');
  		pr_info("faccessat su->sh!\n");
  		*filename_user = sh_user_path();
-@@ -98,24 +96,43 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
+@@ -98,24 +96,41 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
  	return 0;
  }
  
@@ -66,8 +66,6 @@ index 33115933..13bea1ce 100644
 +	if (unlikely(!memcmp(path, su_path, sizeof(su_path)))) {
 +		write_sulog('s');
 +		pr_info("newfstatat su->sh!\n");
-+		// In hookless version, we might need a different approach if name redirection is required.
-+		// For now, we follow the legacy logic but adapted for struct filename.
 +	}
 +
 +	return 0;
@@ -94,7 +92,7 @@ index 33115933..13bea1ce 100644
  		write_sulog('s');
  		pr_info("newfstatat su->sh!\n");
  		*filename_user = sh_user_path();
-@@ -123,66 +140,57 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
+@@ -123,66 +138,57 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
  
  	return 0;
  }
