@@ -239,5 +239,4 @@
 +	}
 +	return 0;
 +}
-+
 +void __init ksu_sucompat_init()
