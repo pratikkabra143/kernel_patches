@@ -1,17 +1,16 @@
 --- a/kernel/hook/setuid_hook.c
 +++ b/kernel/hook/setuid_hook.c
-@@ -81,20 +81,23 @@
+@@ -81,19 +81,23 @@
          return 0;
      }
  
--    if (ksu_is_allow_uid_for_current(new_uid)) {
--        if (current->seccomp.mode == SECCOMP_MODE_FILTER &&
--            current->seccomp.filter) {
 +    // Check if spawned process is normal user app and needs to be umounted
 +    if (likely(is_zygote_normal_app_uid(new_uid) && ksu_uid_should_umount(new_uid)))
 +        goto do_umount;
 +
-+    if (ksu_is_allow_uid_for_current(new_uid)) {
+     if (ksu_is_allow_uid_for_current(new_uid)) {
+-        if (current->seccomp.mode == SECCOMP_MODE_FILTER &&
+-            current->seccomp.filter) {
 +        if (current->seccomp.mode == SECCOMP_MODE_FILTER && current->seccomp.filter) {
              spin_lock_irq(&current->sighand->siglock);
              ksu_seccomp_allow_cache(current->seccomp.filter, __NR_reboot);
@@ -28,14 +27,11 @@
      // Handle kernel umount
      ksu_handle_umount(old_uid, new_uid);
  
--    return 0;
--}
 +    // Handle extra susfs work
 +    ksu_handle_extra_susfs_work();
 +
 +    // Mark current proc as umounted
 +    susfs_set_current_proc_umounted();
 +
-+    return 0;
-+}
-\ No newline at end of file
+     return 0;
+ }

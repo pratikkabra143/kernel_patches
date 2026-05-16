@@ -23,7 +23,12 @@
  bool ksu_su_compat_enabled __read_mostly = true;
  
  static int su_compat_feature_get(u64 *value)
-@@ -71,102 +80,142 @@
+@@ -62,112 +71,142 @@
+ 
+ static char __user *ksud_user_path(void)
+ {
+-	static const char ksud_path[] = KSUD_PATH;
+-
  	return userspace_stack_buffer(ksud_path, sizeof(ksud_path));
  }
  

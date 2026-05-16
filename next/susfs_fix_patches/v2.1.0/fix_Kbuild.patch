@@ -1,6 +1,8 @@
 --- a/kernel/Kbuild
 +++ b/kernel/Kbuild
-@@ -3,18 +3,7 @@
+@@ -1,18 +1,7 @@
+ kernelsu-objs := core/init.o
+ 
  kernelsu-objs += feature/kernel_umount.o
  kernelsu-objs += feature/sucompat.o
  
@@ -17,8 +19,6 @@
 -kernelsu-objs += hook/x86_64/syscall_hook.o
 -endif
  kernelsu-objs += extras.o
- kernelsu-objs += tiny_sulog.o
- 
 @@ -61,11 +50,8 @@
  ccflags-y += -I$(srctree)/security/selinux -I$(srctree)/security/selinux/include
  ccflags-y += -I$(objtree)/security/selinux -include $(srctree)/include/uapi/asm-generic/errno.h
